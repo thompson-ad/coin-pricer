@@ -13,7 +13,7 @@ export function useInterval(
   // Remember the latest callback.
   useEffect(() => {
     savedCallback.current = callback;
-  });
+  }, [callback]);
 
   // Execute callback if immediate is set.
   useEffect(() => {

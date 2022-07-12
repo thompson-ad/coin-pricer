@@ -43,7 +43,7 @@ export class AssetExchange {
   }
 
   // exchange executes a trade from the source asset to the destination asset.
-  // It attepts to purchase "volume" units of the destination asset type by
+  // It attempts to purchase "volume" units of the destination asset type by
   // selling the required number of the "source" asset.
   //
   // As we only have prices for USD pairs, one of source and destination is

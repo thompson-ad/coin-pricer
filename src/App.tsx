@@ -1,15 +1,18 @@
 import "./reset.css";
 import "./index.css";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useInterval from "./useInterval";
-import { CoinPriceList } from "./components/CoinPriceList";
-import Bank from "./core/Bank";
-import AssetExchange from "./core/Exchange";
+import { Coin, CoinPriceList } from "./components/CoinPriceList";
 import { AccountList } from "./components/AccountList";
 import { Exchange } from "./components/Exchange";
+import Bank from "./core/Bank";
+import Observable from "./core/TradeObservable";
+
+const FETCH_COINS_INTERVAL = 30000;
 
 function App() {
-  const [coins, setCoins] = useState([]);
+  const [coins, setCoins] = useState<Coin[]>([]);
+  const [accountData, setAccountData] = useState<Coin[]>([]);
 
   useInterval(
     () => {
@@ -19,36 +22,47 @@ function App() {
         })
         .catch((err) => console.error("ERROR", err));
     },
-    5000,
-    false // Ideally this would be set to true but I ran into rate limiting issues with the coinranking API
+    FETCH_COINS_INTERVAL,
+    true
   );
 
-  // Extract to the core
+  const onAccountsChanged = useCallback(() => {
+    const accounts = coins.filter((coin) => Bank.balances.has(coin.uuid));
+    setAccountData(accounts);
+  }, [coins]);
+
+  useEffect(() => {
+    onAccountsChanged();
+    Observable.subscribe(onAccountsChanged);
+
+    return () => Observable.unsubscribe(onAccountsChanged);
+  }, [onAccountsChanged]);
+
   const fetchSupportedCoins = () => {
-    return window
-      .fetch("/.netlify/functions/get-coins")
-      .then(async (response) => {
-        const { data: coinsData } = await response.json();
-        if (response.ok) {
-          if (coinsData.length > 0) {
-            return coinsData;
-          } else {
-            return Promise.reject(new Error(`Coin data not available`));
-          }
+    return fetch("/.netlify/functions/get-coins").then(async (response) => {
+      const { data: coinsData } = await response.json();
+      if (response.ok) {
+        if (coinsData.length > 0) {
+          return coinsData;
         } else {
-          return Promise.reject("Something went wrong");
+          return Promise.reject(new Error(`Coin data not available`));
         }
-      });
+      } else {
+        return Promise.reject("Something went wrong");
+      }
+    });
   };
+
+  if (!coins.length) {
+    return <h2>Loading</h2>;
+  }
 
   return (
     <div>
       <h2>Prices</h2>
       <CoinPriceList coins={coins} />
-      {/* Shows available accounts and corresponding balances */}
-      {/* The bank gives us a Map of accounts with UUID and balance, how can we show the symbol for the UUID? */}
       <h2>Your Accounts</h2>
-      <AccountList coins={coins} />
+      <AccountList accounts={accountData} />
       <h2>Exchange</h2>
       <Exchange coins={coins} />
     </div>

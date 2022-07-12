@@ -1,18 +1,15 @@
 import { Coin } from "./CoinPriceList";
 import Bank from "../core/Bank";
-
 interface AccountListProps {
-  coins: Coin[];
+  accounts: Coin[];
 }
 
-export const AccountList = ({ coins }: AccountListProps) => {
-  // create account data from available balances and coins data
-  const accounts = Bank.balances;
-  const accountData = coins.filter((coin) => accounts.has(coin.uuid));
-
+export const AccountList = ({ accounts }: AccountListProps) => {
+  // The app holds coin state whereas the Bank singleton holds app global state
+  // I need onAccountsChanged to subscribe to changes to the bank
   return (
     <>
-      {accountData.map((account) => {
+      {accounts.map((account) => {
         return (
           <div key={account?.uuid} className="accountContainer">
             <img

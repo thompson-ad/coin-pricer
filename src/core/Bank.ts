@@ -6,7 +6,6 @@ export class Bank {
   constructor() {
     this.accountBalances = new Map();
     this.accountBalances.set(Asset.USD, 1000.0);
-    this.accountBalances.set(Asset.BTC, 1000.0);
   }
 
   public get assetAccounts(): Asset[] {

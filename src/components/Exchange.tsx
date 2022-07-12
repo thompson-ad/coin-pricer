@@ -3,6 +3,7 @@ import Bank from "../core/Bank";
 import { ChangeEvent, useState, SyntheticEvent } from "react";
 import { Asset } from "../core/Asset";
 import AssetExchange from "../core/Exchange";
+import TradeObservable from "../core/TradeObservable";
 
 interface ExchangeProps {
   coins: Coin[];
@@ -13,34 +14,43 @@ export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
   const [sourceValue, setSourceValue] = useState(Asset.USD);
   const [destinationValue, setDestinationValue] = useState(Asset.BTC);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const availableSourceUuids = Bank.balances;
   const availableSources = availableDestinations.filter((coin) =>
     availableSourceUuids.has(coin.uuid)
   );
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    AssetExchange.exchange(sourceValue, destinationValue, amount);
+    setIsLoading(true);
+    try {
+      const trade = await AssetExchange.exchange(
+        sourceValue,
+        destinationValue,
+        amount
+      );
+      TradeObservable.notify(trade);
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLoading(false);
   };
 
   const handleOnSourceChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    // Validate at least source or destination is "USD"
-    // Don't let the user change to the target value if it means one of source of destination will not be USD
-    const newSourcevalue = e.target.value as Asset;
-    if (newSourcevalue === destinationValue) {
+    const newSourceValue = e.target.value as Asset;
+    if (newSourceValue === destinationValue) {
       setErrorMessage("Source and destination cannot be the same");
-    } else if (newSourcevalue !== Asset.USD && destinationValue !== Asset.USD) {
+    } else if (newSourceValue !== Asset.USD && destinationValue !== Asset.USD) {
       setErrorMessage("Source or destination must be USD");
     } else {
       setErrorMessage("");
     }
 
-    setSourceValue(newSourcevalue);
+    setSourceValue(newSourceValue);
   };
 
   const handleOnDestinationChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    // Validate at least source or detination is "USD"
     const newDestinationValue = e.target.value as Asset;
     if (newDestinationValue === sourceValue) {
       setErrorMessage("Source and destination cannot be the same");
@@ -53,17 +63,13 @@ export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
   };
 
   const handleOnAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // Validate enough money
-    // check fund in source
     const exchangeAmount = parseFloat(e.target.value);
-    const currentBalance = Bank.getBalance(sourceValue);
-    if (currentBalance < exchangeAmount) {
-      setErrorMessage("You have insufficient funds in your account");
-    } else {
-      setErrorMessage("");
-    }
     setAmount(exchangeAmount);
   };
+
+  if (isLoading) {
+    return <p>Exchanging...</p>;
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -95,6 +101,7 @@ export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
           onChange={handleOnAmountChange}
           id="amount"
           type="number"
+          step=".01"
           value={amount}
         />
       </div>

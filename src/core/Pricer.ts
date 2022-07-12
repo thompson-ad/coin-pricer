@@ -64,7 +64,7 @@ export class MyPricer implements IPricingProvider {
       .then((data) => ({
         Source: source,
         Destination: destination,
-        price: data.data.price,
+        Price: parseFloat(data.data.price),
       }))
       .catch((error) => console.error("Error getting price", error));
   }
