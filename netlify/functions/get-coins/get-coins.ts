@@ -23,6 +23,7 @@ export const handler: Handler = async (event, context) => {
         .then((responseData) => {
           const coin = responseData.data.coin;
           return {
+            uuid: coin.uuid,
             name: coin.name,
             priceInUsd: parseFloat(coin.price).toFixed(2),
             symbol: coin.symbol,
