@@ -46,7 +46,8 @@ const coinsFixture = {
 };
 
 const priceFixture = {
-  data: { timestamp: 1657722480, price: "19246.846200288262" },
+  status: "success",
+  data: { data: { timestamp: 1657722480, price: "19246.846200288262" } },
 };
 
 // set up server to mock request for get-coins
@@ -54,12 +55,9 @@ const server = setupServer(
   rest.get("/.netlify/functions/get-coins", async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(coinsFixture));
   }),
-  rest.get(
-    ".netlify/functions/get-coin-price?destinationCoin=Qwsogvtv82FCd&sourceCoin=yhjMzLPhuIDl",
-    async (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(priceFixture));
-    }
-  )
+  rest.get(".netlify/functions/get-coin-price", async (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(priceFixture));
+  })
 );
 
 beforeAll(() => server.listen());
