@@ -1,6 +1,6 @@
 # Buy Crypto!
 
-**Watch my run through [here]()!**
+**Watch my run through [here](https://www.loom.com/share/af27cf5a89cf4169b785e374f1c71f7e)!**
 
 Welcome to my crypto exchanger!
 
@@ -18,7 +18,7 @@ View the live site here: https://papaya-hotteok-aff187.netlify.app/.
 
 - Run `npm test` to run the test suite with jest.
 
-## Architecture
+## Project Structure Overview
 
 - All source files are found in `src/`.
 - Tests are located in `src/App.test.tsx`.
