@@ -1,5 +1,5 @@
 // UUIDs of supported coins according to coin ranking api
-enum SupportedCoins {
+export enum SupportedCoins {
   USD = "yhjMzLPhuIDl",
   BTC = "Qwsogvtv82FCd",
   ETH = "razxDUgYGNAdQ",

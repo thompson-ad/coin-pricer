@@ -81,7 +81,9 @@ export const Exchange = () => {
           id="source"
         >
           {availableSources.map((source) => (
-            <option value={source.uuid}>{source.name}</option>
+            <option key={source.uuid} value={source.uuid}>
+              {source.name}
+            </option>
           ))}
         </select>
         <label htmlFor="destination">To:</label>
@@ -92,7 +94,9 @@ export const Exchange = () => {
           onChange={handleOnDestinationChange}
         >
           {availableDestinations.map((destination) => (
-            <option value={destination.uuid}>{destination.name}</option>
+            <option key={destination.uuid} value={destination.uuid}>
+              {destination.name}
+            </option>
           ))}
         </select>
         <label htmlFor="amount">Amount:</label>

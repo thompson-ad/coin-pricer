@@ -63,8 +63,8 @@ export class MyPricer implements IPricingProvider {
   ): Promise<ICoinPrice> {
     let price;
     try {
-      const priceData = await fetchCoinPrice(source, destination);
-      price = parseFloat(priceData.price);
+      const response = await fetchCoinPrice(source, destination);
+      price = parseFloat(response.data.price);
     } catch (error) {
       console.error(error);
     }

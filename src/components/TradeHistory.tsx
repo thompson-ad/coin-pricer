@@ -46,8 +46,10 @@ export const TradeHistory = () => {
               <p>{destination.name}</p>
               <p>Volume:</p>
               <p>{volume}</p>
-              <p>ExecutedA:</p>
-              <p>{volume}</p>
+              <p>Price:</p>
+              <p>{price}</p>
+              <p>Executed At:</p>
+              <p>{executedAt.toUTCString()}</p>
             </div>
           );
         }

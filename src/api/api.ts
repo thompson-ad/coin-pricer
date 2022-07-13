@@ -2,25 +2,23 @@ import { Asset } from "../core/Asset";
 import { ICoin } from "../core/Coins";
 import { client } from "./client";
 
-export interface Price {
-  price: string;
-  timestamp: string;
+export interface PriceReponse {
+  status: string;
+  data: {
+    price: string;
+    timestamp: number;
+  };
 }
 
-export type AsyncStatus = "IDLE" | "PENDING" | "RESOlVED" | "REJECTED";
-
 export const fetchSupportedCoins = (): Promise<ICoin[]> => {
-  return client("get-coins", { method: "GET" });
+  return client("get-coins");
 };
 
 export const fetchCoinPrice = (
   source: Asset,
   destination: Asset
-): Promise<Price> => {
+): Promise<PriceReponse> => {
   return client(
-    `get-coin-price?destinationCoin=${destination}&sourceCoin=${source}`,
-    {
-      method: "GET",
-    }
+    `get-coin-price?destinationCoin=${destination}&sourceCoin=${source}`
   );
 };
