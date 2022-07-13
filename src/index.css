@@ -3,9 +3,10 @@
   height: 35px;
 }
 
-.coinContainer {
+.coinContainer,
+.accountContainer,
+.tradeContainer {
   display: flex;
   margin-bottom: 30px;
   align-items: center;
-  width: 25%;
 }

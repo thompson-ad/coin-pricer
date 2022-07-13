@@ -1,20 +1,18 @@
-// Notify the UI on a successful trade
+import { ITrade } from "./Exchange";
+
+export type TradeObserver = (trade: ITrade) => void;
 class TradeObservable {
-  private observers: any;
+  private observers: TradeObserver[] = [];
 
-  constructor() {
-    this.observers = [];
-  }
-
-  subscribe(func) {
+  public subscribe(func: TradeObserver) {
     this.observers.push(func);
   }
 
-  unsubscribe(func) {
+  public unsubscribe(func: TradeObserver) {
     this.observers = this.observers.filter((observer) => observer !== func);
   }
 
-  notify(data) {
+  public notify(data: ITrade) {
     this.observers.forEach((observer) => {
       observer(data);
     });

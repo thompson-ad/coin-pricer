@@ -1,20 +1,18 @@
-import { Coin } from "./CoinPriceList";
 import Bank from "../core/Bank";
 import { ChangeEvent, useState, SyntheticEvent } from "react";
 import { Asset } from "../core/Asset";
 import AssetExchange from "../core/Exchange";
 import TradeObservable from "../core/TradeObservable";
+import { useErrorContext } from "../providers/ErrorProvider";
+import { useCoinsContext } from "../providers/CoinsProvider";
 
-interface ExchangeProps {
-  coins: Coin[];
-}
-
-export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
+export const Exchange = () => {
   const [amount, setAmount] = useState(0);
   const [sourceValue, setSourceValue] = useState(Asset.USD);
   const [destinationValue, setDestinationValue] = useState(Asset.BTC);
-  const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { error, addError, removeError } = useErrorContext();
+  const { coins: availableDestinations } = useCoinsContext();
 
   const availableSourceUuids = Bank.balances;
   const availableSources = availableDestinations.filter((coin) =>
@@ -31,8 +29,8 @@ export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
         amount
       );
       TradeObservable.notify(trade);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      addError(error.message);
     }
     setIsLoading(false);
   };
@@ -40,11 +38,11 @@ export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
   const handleOnSourceChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newSourceValue = e.target.value as Asset;
     if (newSourceValue === destinationValue) {
-      setErrorMessage("Source and destination cannot be the same");
+      addError("Source and destination cannot be the same");
     } else if (newSourceValue !== Asset.USD && destinationValue !== Asset.USD) {
-      setErrorMessage("Source or destination must be USD");
+      addError("Source or destination must be USD");
     } else {
-      setErrorMessage("");
+      removeError();
     }
 
     setSourceValue(newSourceValue);
@@ -53,16 +51,17 @@ export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
   const handleOnDestinationChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newDestinationValue = e.target.value as Asset;
     if (newDestinationValue === sourceValue) {
-      setErrorMessage("Source and destination cannot be the same");
+      addError("Source and destination cannot be the same");
     } else if (newDestinationValue !== Asset.USD && sourceValue !== Asset.USD) {
-      setErrorMessage("Source or destination must be USD");
+      addError("Source or destination must be USD");
     } else {
-      setErrorMessage("");
+      removeError();
     }
     setDestinationValue(newDestinationValue);
   };
 
   const handleOnAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    removeError();
     const exchangeAmount = parseFloat(e.target.value);
     setAmount(exchangeAmount);
   };
@@ -105,10 +104,12 @@ export const Exchange = ({ coins: availableDestinations }: ExchangeProps) => {
           value={amount}
         />
       </div>
-      <button disabled={!!errorMessage} type="submit">
+      <button disabled={!!error} type="submit">
         Submit
       </button>
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+      {error && typeof error === "string" ? (
+        <p style={{ color: "red" }}>{error}</p>
+      ) : null}
     </form>
   );
 };

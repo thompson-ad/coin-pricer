@@ -2,7 +2,7 @@ import { Asset } from "./Asset";
 import singletonBank, { Bank } from "./Bank";
 import { IPricingProvider, MyPricer } from "./Pricer";
 
-interface ITrade {
+export interface ITrade {
   ExecutedAt: Date;
   Source: Asset;
   Destination: Asset;
@@ -16,6 +16,7 @@ export enum ExchangeErrorKind {
   INVALID_VOLUME = "Volume invalid, must be positive amount of asset to purchase",
   INSUFFICIENT_BALANCE = "Attempted to sell source asset without sufficient balance",
   NEGATIVE_QUOTE_PRICE = "Unexpected negative quote price received",
+  ZERO_QUOTE_PRICE = "Unexpected zero quote price received",
 }
 
 export class ExchangeError extends Error {
@@ -61,7 +62,7 @@ export class AssetExchange {
     source: Asset,
     destination: Asset,
     volume: number
-  ): ITrade {
+  ): Promise<ITrade> {
     if (source === destination) {
       throw new ExchangeError(ExchangeErrorKind.SOURCE_DESTINATION_EQUAL);
     } else if (volume <= 0) {
@@ -74,6 +75,10 @@ export class AssetExchange {
 
     if (quote.Price < 0) {
       throw new ExchangeError(ExchangeErrorKind.NEGATIVE_QUOTE_PRICE);
+    }
+
+    if (quote.Price === 0) {
+      throw new ExchangeError(ExchangeErrorKind.ZERO_QUOTE_PRICE);
     }
 
     const sourceAmountToSell = quote.Price * volume;

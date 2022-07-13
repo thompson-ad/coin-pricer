@@ -1,12 +1,24 @@
-import { Coin } from "./CoinPriceList";
+import { useCallback, useEffect, useState } from "react";
 import Bank from "../core/Bank";
-interface AccountListProps {
-  accounts: Coin[];
-}
+import { ICoin } from "../core/Coins";
+import TradeObservable from "../core/TradeObservable";
+import { useCoinsContext } from "../providers/CoinsProvider";
 
-export const AccountList = ({ accounts }: AccountListProps) => {
-  // The app holds coin state whereas the Bank singleton holds app global state
-  // I need onAccountsChanged to subscribe to changes to the bank
+export const AccountList = () => {
+  const { coins } = useCoinsContext();
+  const [accounts, setAccounts] = useState<ICoin[]>([]);
+
+  const onAccountsChanged = useCallback(() => {
+    const accounts = coins.filter((coin) => Bank.balances.has(coin.uuid));
+    setAccounts(accounts);
+  }, [coins]);
+
+  useEffect(() => {
+    onAccountsChanged();
+    TradeObservable.subscribe(onAccountsChanged);
+    return () => TradeObservable.unsubscribe(onAccountsChanged);
+  }, [onAccountsChanged]);
+
   return (
     <>
       {accounts.map((account) => {
@@ -19,9 +31,8 @@ export const AccountList = ({ accounts }: AccountListProps) => {
             />
             <div>
               <p>{account?.name}</p>
-              <p>{account?.symbol}</p>
             </div>
-            <p>{`$${Bank.getBalance(account?.uuid)}`}</p>
+            <p>{`${account?.symbol}${Bank.getBalance(account?.uuid)}`}</p>
           </div>
         );
       })}

@@ -1,57 +1,40 @@
 import "./reset.css";
 import "./index.css";
-import { useCallback, useEffect, useState } from "react";
-import useInterval from "./useInterval";
-import { Coin, CoinPriceList } from "./components/CoinPriceList";
+import { useCallback, useEffect } from "react";
+import { CoinPriceList } from "./components/CoinPriceList";
 import { AccountList } from "./components/AccountList";
 import { Exchange } from "./components/Exchange";
-import Bank from "./core/Bank";
-import Observable from "./core/TradeObservable";
+import Coins, { ICoin } from "./core/Coins";
+import { useCoinsContext } from "./providers/CoinsProvider";
+import { TradeHistory } from "./components/TradeHistory";
 
-const FETCH_COINS_INTERVAL = 30000;
+const FETCH_COINS_INTERVAL = 15000;
 
 function App() {
-  const [coins, setCoins] = useState<Coin[]>([]);
-  const [accountData, setAccountData] = useState<Coin[]>([]);
+  const { coins, addCoins } = useCoinsContext();
 
-  useInterval(
-    () => {
-      fetchSupportedCoins()
-        .then((coins) => {
-          setCoins(coins);
-        })
-        .catch((err) => console.error("ERROR", err));
+  const onCoinsUpdated = useCallback(
+    (coins: ICoin[]) => {
+      addCoins(coins);
     },
-    FETCH_COINS_INTERVAL,
-    true
+    [addCoins]
   );
 
-  const onAccountsChanged = useCallback(() => {
-    const accounts = coins.filter((coin) => Bank.balances.has(coin.uuid));
-    setAccountData(accounts);
-  }, [coins]);
+  const getCoins = useCallback(async () => {
+    const coins = await Coins.getCoins();
+    onCoinsUpdated(coins);
+  }, [onCoinsUpdated]);
 
   useEffect(() => {
-    onAccountsChanged();
-    Observable.subscribe(onAccountsChanged);
+    getCoins();
+    Coins.subscribe(onCoinsUpdated);
+    return () => Coins.unsubscribe(onCoinsUpdated);
+  }, [addCoins, getCoins, onCoinsUpdated]);
 
-    return () => Observable.unsubscribe(onAccountsChanged);
-  }, [onAccountsChanged]);
-
-  const fetchSupportedCoins = () => {
-    return fetch("/.netlify/functions/get-coins").then(async (response) => {
-      const { data: coinsData } = await response.json();
-      if (response.ok) {
-        if (coinsData.length > 0) {
-          return coinsData;
-        } else {
-          return Promise.reject(new Error(`Coin data not available`));
-        }
-      } else {
-        return Promise.reject("Something went wrong");
-      }
-    });
-  };
+  useEffect(() => {
+    Coins.updateCoins(FETCH_COINS_INTERVAL);
+    return () => Coins.cleanUpdates();
+  }, []);
 
   if (!coins.length) {
     return <h2>Loading</h2>;
@@ -60,11 +43,13 @@ function App() {
   return (
     <div>
       <h2>Prices</h2>
-      <CoinPriceList coins={coins} />
+      <CoinPriceList />
       <h2>Your Accounts</h2>
-      <AccountList accounts={accountData} />
+      <AccountList />
       <h2>Exchange</h2>
-      <Exchange coins={coins} />
+      <Exchange />
+      <h2>Trade History</h2>
+      <TradeHistory />
     </div>
   );
 }

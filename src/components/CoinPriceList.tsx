@@ -1,18 +1,7 @@
-import { Asset } from "../core/Asset";
+import { useCoinsContext } from "../providers/CoinsProvider";
 
-export interface Coin {
-  uuid: Asset;
-  name: string;
-  priceInUsd: number;
-  symbol: string;
-  iconUrl: string;
-}
-
-interface CoinPriceListProps {
-  coins: Coin[];
-}
-
-export const CoinPriceList = ({ coins }: CoinPriceListProps) => {
+export const CoinPriceList = () => {
+  const { coins } = useCoinsContext();
   return (
     <>
       {coins.map((coin) => {

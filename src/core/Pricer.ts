@@ -1,3 +1,4 @@
+import { fetchCoinPrice } from "../api/api";
 import { Asset } from "./Asset";
 
 // ICoinPrice represents the price for an asset pair, which is a source (what
@@ -48,7 +49,7 @@ export interface ICoinPrice {
 //
 // https://rapidapi.com/Coinranking/api/coinranking1/
 export interface IPricingProvider {
-  getCoinPrice: (source: Asset, destination: Asset) => ICoinPrice;
+  getCoinPrice: (source: Asset, destination: Asset) => Promise<ICoinPrice>;
 }
 
 // TODO implement MyPricer using the RapidAPI Get Coin endpoint.
@@ -56,16 +57,24 @@ export interface IPricingProvider {
 // Hint: the Asset enum's values correspond with the ID of the USD/coin pairs
 // in the GetCoin API.
 export class MyPricer implements IPricingProvider {
-  public getCoinPrice(source: Asset, destination: Asset): ICoinPrice {
-    return fetch(
-      `/.netlify/functions/get-coin-price?destinationCoin=${destination}&sourceCoin=${source}`
-    )
-      .then((response) => response.json())
-      .then((data) => ({
-        Source: source,
-        Destination: destination,
-        Price: parseFloat(data.data.price),
-      }))
-      .catch((error) => console.error("Error getting price", error));
+  public async getCoinPrice(
+    source: Asset,
+    destination: Asset
+  ): Promise<ICoinPrice> {
+    let price;
+    try {
+      const priceData = await fetchCoinPrice(source, destination);
+      price = parseFloat(priceData.price);
+    } catch (error) {
+      console.error(error);
+    }
+    return {
+      Source: source,
+      Destination: destination,
+      Price: price || 0, // Exhange will handle the zero exception
+    };
   }
 }
+
+// Can I extract getCoins to MyPricer on a setInterval and update the UI? with a CoinsObservable
+//
