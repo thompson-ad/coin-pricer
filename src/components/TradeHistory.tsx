@@ -35,7 +35,11 @@ export const TradeHistory = () => {
       {tradeHistory.map(
         ({ executedAt, source, destination, volume, price }) => {
           return (
-            <div key={executedAt.toISOString()} className="tradeContainer">
+            <div
+              data-testid="trade"
+              key={executedAt.toISOString()}
+              className="tradeContainer"
+            >
               <p>From:</p>
               <p>{source.name}</p>
               <p>To:</p>

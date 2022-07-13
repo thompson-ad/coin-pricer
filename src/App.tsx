@@ -37,7 +37,7 @@ function App() {
   }, []);
 
   if (!coins.length) {
-    return <h2>Loading</h2>;
+    return <h2 data-testid="loading">Loading</h2>;
   }
 
   return (

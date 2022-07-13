@@ -67,7 +67,7 @@ export const Exchange = () => {
   };
 
   if (isLoading) {
-    return <p>Exchanging...</p>;
+    return <p data-testid="exchanging">Exchanging...</p>;
   }
 
   return (

@@ -23,7 +23,11 @@ export const AccountList = () => {
     <>
       {accounts.map((account) => {
         return (
-          <div key={account?.uuid} className="accountContainer">
+          <div
+            data-testid="account"
+            key={account?.uuid}
+            className="accountContainer"
+          >
             <img
               src={account?.iconUrl}
               alt={`${account?.name} icon`}

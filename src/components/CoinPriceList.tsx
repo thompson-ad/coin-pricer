@@ -6,7 +6,7 @@ export const CoinPriceList = () => {
     <>
       {coins.map((coin) => {
         return (
-          <div key={coin.uuid} className="coinContainer">
+          <div data-testid="coin" key={coin.uuid} className="coinContainer">
             <img
               src={coin.iconUrl}
               alt={`${coin.name} icon`}
