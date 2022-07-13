@@ -3,7 +3,7 @@ import { useCoinsContext } from "../providers/CoinsProvider";
 export const CoinPriceList = () => {
   const { coins } = useCoinsContext();
   return (
-    <>
+    <section>
       {coins.map((coin) => {
         return (
           <div data-testid="coin" key={coin.uuid} className="coinContainer">
@@ -20,6 +20,6 @@ export const CoinPriceList = () => {
           </div>
         );
       })}
-    </>
+    </section>
   );
 };

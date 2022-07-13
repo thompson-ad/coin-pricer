@@ -20,7 +20,7 @@ export const AccountList = () => {
   }, [onAccountsChanged]);
 
   return (
-    <>
+    <section>
       {accounts.map((account) => {
         return (
           <div
@@ -33,13 +33,11 @@ export const AccountList = () => {
               alt={`${account?.name} icon`}
               className="icon"
             />
-            <div>
-              <p>{account?.name}</p>
-            </div>
-            <p>{`${account?.symbol}${Bank.getBalance(account?.uuid)}`}</p>
+            <p>{account?.symbol}</p>
+            <p>{`${Bank.getBalance(account?.uuid).toFixed(2)}`}</p>
           </div>
         );
       })}
-    </>
+    </section>
   );
 };

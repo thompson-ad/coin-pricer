@@ -9,6 +9,7 @@ View the live site here: https://papaya-hotteok-aff187.netlify.app/.
 ## Getting Started
 
 - Clone this repository.
+- Ensure you are running Node LTS (v16.16.0).
 - Install `node_modules` by running `npm i`.
 - Install the [Netlify cli](https://docs.netlify.com/cli/get-started/) by running `npm install netlify-cli -g`
 - Start the local server by running `netlify dev`. This start the development server and serve the lambda functions locally

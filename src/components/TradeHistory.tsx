@@ -31,29 +31,29 @@ export const TradeHistory = () => {
   }, [onTradesChanged]);
 
   return (
-    <>
-      {tradeHistory.map(
-        ({ executedAt, source, destination, volume, price }) => {
-          return (
-            <div
-              data-testid="trade"
-              key={executedAt.toISOString()}
-              className="tradeContainer"
-            >
-              <p>From:</p>
-              <p>{source.name}</p>
-              <p>To:</p>
-              <p>{destination.name}</p>
-              <p>Volume:</p>
-              <p>{volume}</p>
-              <p>Price:</p>
-              <p>{price}</p>
-              <p>Executed At:</p>
-              <p>{executedAt.toUTCString()}</p>
-            </div>
-          );
-        }
-      )}
-    </>
+    <section>
+      <table>
+        <tr>
+          <th>Source:</th>
+          <th>Destination:</th>
+          <th>Volume:</th>
+          <th>Price in source asset:</th>
+          <th>Executed at:</th>
+        </tr>
+        {tradeHistory.map(
+          ({ executedAt, source, destination, volume, price }) => {
+            return (
+              <tr data-testid="trade" key={executedAt.toISOString()}>
+                <td>{source.name}</td>
+                <td>{destination.name}</td>
+                <td>{volume}</td>
+                <td>{price.toFixed(2)}</td>
+                <td>{executedAt.toUTCString()}</td>
+              </tr>
+            );
+          }
+        )}
+      </table>
+    </section>
   );
 };

@@ -71,49 +71,51 @@ export const Exchange = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="source">From:</label>
-        <select
-          value={sourceValue}
-          onChange={handleOnSourceChange}
-          name="from"
-          id="source"
-        >
-          {availableSources.map((source) => (
-            <option key={source.uuid} value={source.uuid}>
-              {source.name}
-            </option>
-          ))}
-        </select>
-        <label htmlFor="destination">To:</label>
-        <select
-          value={destinationValue}
-          name="to"
-          id="destination"
-          onChange={handleOnDestinationChange}
-        >
-          {availableDestinations.map((destination) => (
-            <option key={destination.uuid} value={destination.uuid}>
-              {destination.name}
-            </option>
-          ))}
-        </select>
-        <label htmlFor="amount">Amount:</label>
-        <input
-          onChange={handleOnAmountChange}
-          id="amount"
-          type="number"
-          step=".01"
-          value={amount}
-        />
-      </div>
-      <button disabled={!!error} type="submit">
-        Submit
-      </button>
-      {error && typeof error === "string" ? (
-        <p style={{ color: "red" }}>{error}</p>
-      ) : null}
-    </form>
+    <section>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="source">From:</label>
+          <select
+            value={sourceValue}
+            onChange={handleOnSourceChange}
+            name="from"
+            id="source"
+          >
+            {availableSources.map((source) => (
+              <option key={source.uuid} value={source.uuid}>
+                {source.name}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="destination">To:</label>
+          <select
+            value={destinationValue}
+            name="to"
+            id="destination"
+            onChange={handleOnDestinationChange}
+          >
+            {availableDestinations.map((destination) => (
+              <option key={destination.uuid} value={destination.uuid}>
+                {destination.name}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="amount">Amount:</label>
+          <input
+            onChange={handleOnAmountChange}
+            id="amount"
+            type="number"
+            step=".01"
+            value={amount}
+          />
+        </div>
+        <button disabled={!!error} type="submit">
+          Submit
+        </button>
+        {error && typeof error === "string" ? (
+          <p style={{ color: "red" }}>{error}</p>
+        ) : null}
+      </form>
+    </section>
   );
 };
