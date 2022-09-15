@@ -7,11 +7,13 @@ import { Exchange } from "./components/Exchange";
 import Coins, { ICoin } from "./core/Coins";
 import { useCoinsContext } from "./providers/CoinsProvider";
 import { TradeHistory } from "./components/TradeHistory";
+import { useCoinsAppContext } from "./providers/CoinAppProvider";
 
 const FETCH_COINS_INTERVAL = 15000;
 
 function App() {
-  const { coins, addCoins } = useCoinsContext();
+  // const { coins, addCoins } = useCoinsContext();
+  const { coins, addCoins } = useCoinsAppContext();
 
   const onCoinsUpdated = useCallback(
     (coins: ICoin[]) => {

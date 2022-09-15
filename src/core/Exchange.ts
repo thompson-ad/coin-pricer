@@ -1,6 +1,6 @@
 import { Asset } from "./Asset";
-import singletonBank, { Bank } from "./Bank";
-import { IPricingProvider, MyPricer } from "./Pricer";
+import type { Bank } from "./Bank";
+import type { IPricingProvider } from "./Pricer";
 
 export interface ITrade {
   ExecutedAt: Date;
@@ -100,6 +100,3 @@ export class AssetExchange {
     return trade;
   }
 }
-
-const singletonAssetExchange = new AssetExchange(new MyPricer(), singletonBank);
-export default singletonAssetExchange;

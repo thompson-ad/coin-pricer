@@ -39,6 +39,3 @@ export class Bank {
     this.setBalance(asset, this.getBalance(asset) + adjustment);
   }
 }
-
-const singletonBank = new Bank();
-export default singletonBank;

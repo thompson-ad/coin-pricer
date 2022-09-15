@@ -1,7 +1,7 @@
 import { ITrade } from "./Exchange";
 
 export type TradeObserver = (trade: ITrade) => void;
-class TradeObservable {
+export class TradeObservable {
   private observers: TradeObserver[] = [];
 
   public subscribe(func: TradeObserver) {
@@ -18,5 +18,3 @@ class TradeObservable {
     });
   }
 }
-
-export default new TradeObservable();

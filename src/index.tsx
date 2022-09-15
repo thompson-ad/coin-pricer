@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import ErrorProvider from "./providers/ErrorProvider";
 import CoinsProvider from "./providers/CoinsProvider";
+import { CoinsAppProvider } from "./providers/CoinAppProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -12,9 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ErrorProvider>
-      <CoinsProvider>
-        <App />
-      </CoinsProvider>
+      <CoinsAppProvider>
+        <CoinsProvider>
+          <App />
+        </CoinsProvider>
+      </CoinsAppProvider>
     </ErrorProvider>
   </React.StrictMode>
 );

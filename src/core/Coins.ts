@@ -1,5 +1,5 @@
 import { fetchSupportedCoins } from "../api/api";
-import { Asset } from "./Asset";
+import type { Asset } from "./Asset";
 
 export interface ICoin {
   uuid: Asset;
@@ -51,5 +51,3 @@ export class Coins {
     this.observers.forEach((observer) => observer(coins));
   }
 }
-
-export default new Coins();
